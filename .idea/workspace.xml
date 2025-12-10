@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="350d4f1d-3b95-4401-8e3c-aac1baaa678b" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/liranso/vms/visitormanagement/controller/AdminController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/liranso/vms/visitormanagement/controller/HostController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/liranso/vms/visitormanagement/dto/HostRegistrationRequest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/liranso/vms/visitormanagement/dto/ReceptionistRegistrationRequest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/liranso/vms/visitormanagement/model/Appointment.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/liranso/vms/visitormanagement/model/Host.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/liranso/vms/visitormanagement/model/Receptionist.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/liranso/vms/visitormanagement/repository/AppointmentRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/liranso/vms/visitormanagement/repository/HostRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/liranso/vms/visitormanagement/repository/ReceptionistRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/liranso/vms/visitormanagement/service/HostService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/liranso/vms/visitormanagement/service/KeycloakAdminService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/liranso/vms/visitormanagement/service/RegistrationService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.mvn/wrapper/maven-wrapper.properties" beforeDir="false" afterPath="$PROJECT_DIR$/backend/.mvn/wrapper/maven-wrapper.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/liranso/vms/visitormanagement/controller/ReceptionistController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/liranso/vms/visitormanagement/controller/ReceptionistController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/liranso/vms/visitormanagement/model/Visitor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/liranso/vms/visitormanagement/model/Visitor.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/liranso/vms/visitormanagement/security/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/liranso/vms/visitormanagement/security/SecurityConfig.java" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="module-info" />
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="MavenImportPreferences">
+    <option name="generalSettings">
+      <MavenGeneralSettings>
+        <option name="mavenHomeTypeForPersistence" value="WRAPPER" />
+      </MavenGeneralSettings>
+    </option>
+  </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="AISelfReview" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 0
+}</component>
+  <component name="ProjectId" id="36Kw2gm3ThbpUJ2liUjWNeRUMyy" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;Spring Boot.VisitorManagementApplication.executor&quot;: &quot;Run&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  }
+}</component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\hp\IdeaProjects\visitor-management\backend" />
+    </key>
+    <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
+      <recent name="com.liranso.vms.visitormanagement" />
+    </key>
+  </component>
+  <component name="RunManager">
+    <configuration name="VisitorManagementApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <module name="visitor-management" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.liranso.vms.visitormanagement.VisitorManagementApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-9823dce3aa75-bf35d07a577b-intellij.indexing.shared.core-IU-252.28238.7" />
+        <option value="bundled-js-predefined-d6986cc7102b-a71380e98a7c-JavaScript-IU-252.28238.7" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="350d4f1d-3b95-4401-8e3c-aac1baaa678b" name="Changes" comment="" />
+      <created>1764768373549</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1764768373549</updated>
+      <workItem from="1764768375000" duration="319000" />
+      <workItem from="1764880766995" duration="1610000" />
+      <workItem from="1764925866309" duration="2839000" />
+      <workItem from="1764931975997" duration="811000" />
+      <workItem from="1764933018347" duration="2608000" />
+      <workItem from="1764967062645" duration="2831000" />
+      <workItem from="1764977492537" duration="5170000" />
+      <workItem from="1765051276594" duration="778000" />
+      <workItem from="1765130854560" duration="6975000" />
+      <workItem from="1765145950746" duration="4521000" />
+      <workItem from="1765176836066" duration="2599000" />
+      <workItem from="1765186876344" duration="52000" />
+      <workItem from="1765186946563" duration="1019000" />
+      <workItem from="1765191880439" duration="5987000" />
+      <workItem from="1765215268303" duration="1911000" />
+      <workItem from="1765220123798" duration="10358000" />
+      <workItem from="1765307257350" duration="5861000" />
+      <workItem from="1765373726437" duration="1506000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="github-copilot-workspace">
+    <instructionFileLocations>
+      <option value=".github/instructions" />
+    </instructionFileLocations>
+    <promptFileLocations>
+      <option value=".github/prompts" />
+    </promptFileLocations>
+  </component>
+</project>

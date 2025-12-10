@@ -18,8 +18,6 @@ public class Visitor {
     @Email
     private String email;
     private String phone;
-    @NotBlank
-    private String purposeOfVisit;
     private String status;
     @NotBlank
     private String hostName;
