@@ -5,24 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="350d4f1d-3b95-4401-8e3c-aac1baaa678b" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/liranso/vms/visitormanagement/controller/AdminController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/liranso/vms/visitormanagement/controller/HostController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/liranso/vms/visitormanagement/dto/HostRegistrationRequest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/liranso/vms/visitormanagement/dto/ReceptionistRegistrationRequest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/liranso/vms/visitormanagement/model/Appointment.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/liranso/vms/visitormanagement/model/Host.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/liranso/vms/visitormanagement/model/Receptionist.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/liranso/vms/visitormanagement/repository/AppointmentRepository.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/liranso/vms/visitormanagement/repository/HostRepository.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/liranso/vms/visitormanagement/repository/ReceptionistRepository.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/liranso/vms/visitormanagement/service/HostService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/liranso/vms/visitormanagement/service/KeycloakAdminService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/liranso/vms/visitormanagement/service/RegistrationService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.mvn/wrapper/maven-wrapper.properties" beforeDir="false" afterPath="$PROJECT_DIR$/backend/.mvn/wrapper/maven-wrapper.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/liranso/vms/visitormanagement/controller/ReceptionistController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/liranso/vms/visitormanagement/controller/ReceptionistController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/liranso/vms/visitormanagement/model/Visitor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/liranso/vms/visitormanagement/model/Visitor.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/liranso/vms/visitormanagement/security/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/liranso/vms/visitormanagement/security/SecurityConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/liranso/vms/visitormanagement/controller/HostController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/liranso/vms/visitormanagement/controller/HostController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/liranso/vms/visitormanagement/controller/ReceptionistController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/liranso/vms/visitormanagement/controller/ReceptionistController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/liranso/vms/visitormanagement/controller/VisitorController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/liranso/vms/visitormanagement/controller/VisitorController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/liranso/vms/visitormanagement/service/HostService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/liranso/vms/visitormanagement/service/HostService.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -80,6 +67,7 @@
 }</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\hp\IdeaProjects\visitor-management" />
       <recent name="C:\Users\hp\IdeaProjects\visitor-management\backend" />
     </key>
     <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
@@ -128,6 +116,8 @@
       <workItem from="1765220123798" duration="10358000" />
       <workItem from="1765307257350" duration="5861000" />
       <workItem from="1765373726437" duration="1506000" />
+      <workItem from="1765375816534" duration="786000" />
+      <workItem from="1765394605790" duration="6628000" />
     </task>
     <servers />
   </component>

@@ -23,12 +23,20 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        // Public registration endpoint (no authentication)
+                        // Public endpoints (no authentication required)
                         .requestMatchers("/public/**").permitAll()
 
-                        // Receptionist-only endpoints
-                        .requestMatchers("/api/receptionist/**")
-                        .hasAnyAuthority("receptionist", "admin")
+                        // Admin-only endpoints
+                        .requestMatchers("/api/admin/**").hasAuthority("admin")
+
+                        // Host endpoints
+                        .requestMatchers("/api/host/**").hasAnyAuthority("host", "admin")
+
+                        // Receptionist endpoints
+                        .requestMatchers("/api/receptionist/**").hasAnyAuthority("receptionist", "admin")
+
+                        // Visitor endpoints (authenticated visitors)
+                        .requestMatchers("/api/visitor/**").hasAnyAuthority("visitor", "admin")
 
                         // Everything else must be authenticated
                         .anyRequest().authenticated()

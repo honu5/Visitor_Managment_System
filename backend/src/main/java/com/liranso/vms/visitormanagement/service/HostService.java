@@ -66,4 +66,44 @@ public class HostService {
     public Appointment createAppointment(Appointment appt) {
         return appointmentRepository.save(appt);
     }
+
+    public Appointment updateAppointment(Long id, Appointment appt) {
+        return appointmentRepository.findById(id)
+                .map(existing -> {
+                    existing.setDate(appt.getDate());
+                    existing.setStartTime(appt.getStartTime());
+                    existing.setEndTime(appt.getEndTime());
+                    existing.setStatus(appt.getStatus());
+                    return appointmentRepository.save(existing);
+                })
+                .orElse(null);
+    }
+
+    public List<String> getAllDepartments() {
+        return hostRepository.findAll().stream()
+                .map(Host::getDepartment)
+                .distinct()
+                .toList();
+    }
+
+    public Host getHostById(Long id) {
+        return hostRepository.findById(id).orElse(null);
+    }
+
+    public Host updateHost(Long id, Host host) {
+        return hostRepository.findById(id)
+                .map(existing -> {
+                    existing.setFullName(host.getFullName());
+                    existing.setEmail(host.getEmail());
+                    existing.setDepartment(host.getDepartment());
+                    existing.setWorkHoursStart(host.getWorkHoursStart());
+                    existing.setWorkHoursEnd(host.getWorkHoursEnd());
+                    return hostRepository.save(existing);
+                })
+                .orElse(null);
+    }
+
+    public void deleteHost(Long id) {
+        hostRepository.deleteById(id);
+    }
 }

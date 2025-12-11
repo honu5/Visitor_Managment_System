@@ -19,48 +19,50 @@ public class ReceptionistController {
     private final VisitorService visitorService;
     private final HostService hostService;
 
-    // Visitor endpoints
-    @GetMapping("/visitors/today")
-    public List<Visitor> getVisitorsToday() {
-        return visitorService.getVisitorsToday();
-    }
-
-    @GetMapping("/visitors/all")
-    public List<Visitor> getAllVisitors() {
-        return visitorService.getAllVisitors();
-    }
-
-    @GetMapping("/visitors/{id}")
-    public ResponseEntity<Visitor> getVisitor(@PathVariable Long id) {
-        Visitor v = visitorService.getVisitorById(id);
-        return (v != null) ? ResponseEntity.ok(v) : ResponseEntity.notFound().build();
-    }
-
-    // Host endpoints
+    // GET /api/receptionist/hosts
     @GetMapping("/hosts")
     public List<Host> getAllHosts() {
+        // TODO: Filter by receptionist's department
         return hostService.getAllHosts();
     }
 
-    @GetMapping("/hosts/department/{department}")
-    public List<Host> getHostsByDepartment(@PathVariable String department) {
-        return hostService.getHostsByDepartment(department);
+    // GET /api/receptionist/hosts/{id}/schedule
+    @GetMapping("/hosts/{id}/schedule")
+    public List<Appointment> getHostSchedule(@PathVariable Long id) {
+        return hostService.getHostAppointments(id);
     }
 
-    @GetMapping("/hosts/{hostId}/appointments")
-    public List<Appointment> getHostAppointments(@PathVariable Long hostId) {
-        return hostService.getHostAppointments(hostId);
-    }
-
-    @GetMapping("/hosts/{hostId}/availability")
-    public List<String> getHostAvailability(@PathVariable Long hostId) {
-        return hostService.getHostAvailability(hostId);
-    }
-
-    // Appointment scheduling
+    // POST /api/receptionist/appointments
     @PostMapping("/appointments")
     public ResponseEntity<Appointment> createAppointment(@RequestBody Appointment appointment) {
         Appointment created = hostService.createAppointment(appointment);
         return ResponseEntity.ok(created);
+    }
+
+    // PUT /api/receptionist/appointments/{id}
+    @PutMapping("/appointments/{id}")
+    public ResponseEntity<Appointment> updateAppointment(@PathVariable Long id, @RequestBody Appointment appointment) {
+        Appointment updated = hostService.updateAppointment(id, appointment);
+        return (updated != null) ? ResponseEntity.ok(updated) : ResponseEntity.notFound().build();
+    }
+
+    // GET /api/receptionist/visitors/upcoming
+    @GetMapping("/visitors/upcoming")
+    public List<Visitor> getUpcomingVisitors() {
+        // TODO: Implement upcoming visitors logic
+        return visitorService.getVisitorsToday();
+    }
+
+    // GET /api/receptionist/visitors/history
+    @GetMapping("/visitors/history")
+    public List<Visitor> getVisitorsHistory() {
+        return visitorService.getAllVisitors();
+    }
+
+    // GET /api/receptionist/notifications
+    @GetMapping("/notifications")
+    public List<String> getReceptionistNotifications() {
+        // TODO: Implement notifications
+        return List.of();
     }
 }
