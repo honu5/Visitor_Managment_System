@@ -17,3 +17,28 @@ export async function fetchHostNotifications(){
   const res = await fetch(`${API_BASE}/api/host/notifications`)
   return res.json()
 }
+
+export async function fetchHostToday(){
+  const res = await fetch(`${API_BASE}/api/host/today`)
+  return res.json()
+}
+
+export async function fetchHostPending(){
+  const res = await fetch(`${API_BASE}/api/host/pending`)
+  return res.json()
+}
+
+export async function approvePending(id,payload){
+  const res = await fetch(`${API_BASE}/api/host/pending/${id}/approve`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)})
+  return res.json()
+}
+
+export async function rejectPending(id,payload){
+  const res = await fetch(`${API_BASE}/api/host/pending/${id}/reject`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)})
+  return res.json()
+}
+
+export async function createHostAppointment(payload){
+  const res = await fetch(`${API_BASE}/api/host/appointment`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)})
+  return res.json()
+}

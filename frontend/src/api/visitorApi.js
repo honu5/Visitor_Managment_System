@@ -1,10 +1,10 @@
 const API_BASE = ''
 export async function fetchAppointments(){
-  const res = await fetch(`${API_BASE}/public/appointments`)
+  const res = await fetch(`${API_BASE}/appointments`)
   return res.json()
 }
 export async function createAppointment(data){
-  const res = await fetch(`${API_BASE}/public/appointments`,{
+  const res = await fetch(`${API_BASE}/appointments`,{
     method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)
   })
   return res.json()

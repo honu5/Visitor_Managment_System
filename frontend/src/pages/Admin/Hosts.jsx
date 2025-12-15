@@ -1,15 +1,18 @@
 import React, {useState} from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useFetch } from '../../hooks/useApi'
 import { fetchAdminHosts, createAdminHost } from '../../api/adminApi'
 import SimpleTable from '../../components/Tables/SimpleTable'
 
 export default function AdminHosts(){
+  const navigate = useNavigate()
   const {data,loading} = useFetch(fetchAdminHosts,[])
   const [form,setForm] = useState({name:'',department:''})
   async function submit(e){
     e.preventDefault();
     await createAdminHost(form);
-    alert('Created (may need refresh)')
+    // go back to hosts list (will show updated after manual refresh if backend returns created list)
+    navigate('/admin/hosts')
   }
   if(loading) return <div>Loading...</div>
   return (
@@ -19,8 +22,8 @@ export default function AdminHosts(){
       <div className="card">
         <h3>Create Host</h3>
         <form onSubmit={submit}>
-          <div className="form-row"><label>Name</label><input value={form.name} onChange={e=>setForm({...form,name:e.target.value})} /></div>
-          <div className="form-row"><label>Department</label><input value={form.department} onChange={e=>setForm({...form,department:e.target.value})} /></div>
+          <div className="form-row"><label className="form-label">Name</label><input className="form-input" value={form.name} onChange={e=>setForm({...form,name:e.target.value})} /></div>
+          <div className="form-row"><label className="form-label">Department</label><input className="form-input" value={form.department} onChange={e=>setForm({...form,department:e.target.value})} /></div>
           <button className="button">Create</button>
         </form>
       </div>
