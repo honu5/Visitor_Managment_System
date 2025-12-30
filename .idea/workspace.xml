@@ -5,28 +5,23 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="350d4f1d-3b95-4401-8e3c-aac1baaa678b" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/backend/src/main/java/com/liranso/vms/visitormanagement/config/WebConfig.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/src/main/java/com/liranso/vms/visitormanagement/controller/IntegrationController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/src/main/java/com/liranso/vms/visitormanagement/service/InMemoryDataService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/src/main/java/com/liranso/vms/visitormanagement/config/CorsConfig.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/backend/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/liranso/vms/visitormanagement/controller/HostController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/liranso/vms/visitormanagement/controller/HostController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/liranso/vms/visitormanagement/security/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/liranso/vms/visitormanagement/security/SecurityConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/resources/application.properties" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/App.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/App.jsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/api/adminApi.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/api/adminApi.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/api/hostApi.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/api/hostApi.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/api/kioskApi.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/api/kioskApi.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/api/receptionistApi.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/api/receptionistApi.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/api/visitorApi.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/api/visitorApi.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/Layout/HostLayout.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Layout/HostLayout.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/Layout/KioskLayout.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Layout/KioskLayout.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/Layout/ReceptionistLayout.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Layout/ReceptionistLayout.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Layout/AdminLayout.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Layout/AdminLayout.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/pages/Admin/Analytics.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/Admin/Analytics.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/pages/Admin/Hosts.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/Admin/Hosts.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/pages/Admin/Receptionists.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/Admin/Receptionists.jsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/pages/Host/Home.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/Host/Home.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/pages/Host/Notifications.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/Host/Notifications.jsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/pages/Host/Pending.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/Host/Pending.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/pages/Host/Schedule.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/Host/Schedule.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/pages/Kiosk/KioskHome.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/Kiosk/KioskHome.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/pages/Receptionist/Notifications.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/Receptionist/Notifications.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/pages/Receptionist/Visitors.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/Receptionist/Visitors.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/pages/Visitor/Appointments.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/Visitor/Appointments.jsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/styles.css" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/styles.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/prisma/schema.prisma" beforeDir="false" afterPath="$PROJECT_DIR$/server/prisma/schema.prisma" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/server.js" beforeDir="false" afterPath="$PROJECT_DIR$/server/server.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -65,23 +60,23 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;Spring Boot.VisitorManagementApplication.executor&quot;: &quot;Run&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "Spring Boot.VisitorManagementApplication.executor": "Run",
+    "git-widget-placeholder": "check",
+    "kotlin-language-version-configured": "true",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\hp\IdeaProjects\visitor-management" />
@@ -141,6 +136,7 @@
       <workItem from="1766237741000" duration="2215000" />
       <workItem from="1766259810125" duration="2188000" />
       <workItem from="1766386516431" duration="1930000" />
+      <workItem from="1767092990252" duration="847000" />
     </task>
     <servers />
   </component>

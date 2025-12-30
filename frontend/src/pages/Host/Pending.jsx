@@ -57,7 +57,26 @@ export default function HostPending(){
   async function doReject(a){
     try{
       setActionError('')
-      await fetch(`/api/host/pending/${a.id}/reject`,{method:'POST'})
+        const raw = window.prompt('In how many days can the visitor re-apply?', '7')
+        if (raw === null) return
+
+        const cooldownDays = Number(raw)
+        if (!Number.isFinite(cooldownDays) || cooldownDays < 0) {
+          alert('Please enter a valid number of days (0 or more).')
+          return
+        }
+
+        const resp = await fetch(`/api/host/pending/${a.id}/reject`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ cooldownDays }),
+        })
+
+        if (!resp.ok) {
+          const data = await resp.json().catch(() => null)
+          alert(data?.error || 'Failed to reject appointment')
+          return
+        }
       setData(d=>d.filter(x=>x.id!==a.id))
       setSelected(null)
       setScheduleDate('')

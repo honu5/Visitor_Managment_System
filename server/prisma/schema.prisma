@@ -20,16 +20,41 @@ model Department {
   id    Int    @id @default(autoincrement())
   name  String @unique
   hosts Host[]
+  receptionists Receptionist[]
 }
 
 model Host {
   id           Int          @id @default(autoincrement())
   name         String
   email        String
+  building     String?
+  officeNumber String?
   department   Department?  @relation(fields: [departmentId], references: [id])
   departmentId Int?
   appointments Appointment[]
   blocks       HostBlock[]
+  cooldowns    HostVisitorCooldown[]
+}
+
+model HostVisitorCooldown {
+  id           Int      @id @default(autoincrement())
+  host         Host     @relation(fields: [hostId], references: [id])
+  hostId       Int
+  visitorEmail String
+  blockedUntil DateTime
+  createdAt    DateTime @default(now())
+
+  @@unique([hostId, visitorEmail])
+  @@index([visitorEmail])
+}
+
+model Receptionist {
+  id           Int         @id @default(autoincrement())
+  name         String
+  email        String      @unique
+  department   Department? @relation(fields: [departmentId], references: [id])
+  departmentId Int?
+  createdAt    DateTime    @default(now())
 }
 
 model HostBlock {
@@ -60,6 +85,7 @@ model Appointment {
   hostId      Int
   visitor     Visitor? @relation(fields: [visitorId], references: [id])
   visitorId   Int?
+  source      String   @default("visitor")
   status      String   @default("pending")
   scheduledAt DateTime?
   rescheduledAt DateTime?

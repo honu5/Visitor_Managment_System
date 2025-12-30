@@ -10,6 +10,7 @@ function Home() {
   const [pending, setPending] = useState([])
 
   const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [host, setHost] = useState(() => {
     try{ return JSON.parse(localStorage.getItem('vms_host')||'null') }catch(e){return null}
@@ -41,10 +42,14 @@ function Home() {
     e.preventDefault()
     setError('')
     try{
-      const res = await fetch('/api/host/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email})})
+      const res = await fetch('/api/host/login',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({ email, password })
+      })
       const data = await res.json()
       if(!res.ok){
-        setError(data.message || 'Login failed')
+        setError(data?.message || data?.error || 'Login failed')
         return
       }
       if(data?.host){
@@ -67,19 +72,27 @@ function Home() {
       <div>
         <div style={{display:'flex',justifyContent:'center',marginTop:48}}>
           <Card style={{width:420}}>
-            <h3 style={{marginTop:0}}>Host login</h3>
-            <p>Enter your email to continue. For demo use the two host emails provided by the system.</p>
+            <div style={{fontSize:12,letterSpacing:0.6,textTransform:'uppercase',color:'#666',marginBottom:6}}>
+              Keycloak
+            </div>
+            <h3 style={{marginTop:0}}>Sign in to Visitor Management</h3>
+            <p style={{marginTop:6}}>This is a demo Keycloak login screen (no real Keycloak auth).</p>
             <form onSubmit={login}>
-              <div className="form-row"><label className="form-label">Email</label>
+              <div className="form-row"><label className="form-label">Username or email</label>
                 <input className="form-input" type="email" required value={email} onChange={e=>setEmail(e.target.value)} />
               </div>
+              <div className="form-row"><label className="form-label">Password</label>
+                <input className="form-input" type="password" required value={password} onChange={e=>setPassword(e.target.value)} />
+              </div>
               <div style={{marginTop:12}}>
-                <button className="button" type="submit">Login</button>
+                <button className="button" type="submit">Sign in</button>
               </div>
               {error && <div style={{marginTop:8,color:'#a00'}}>{error}</div>}
             </form>
             <div style={{marginTop:12,fontSize:13,color:'#666'}}>
-              Demo hosts: <br/> liranso392@gmail.com (Daniel Mekurian - Human Resource)<br/> honelignyohannes1@gmail.com (Honelign Yohannes - IT Department)
+              Demo users (password: 12345):<br/>
+              liranso392@gmail.com (Daniel Mekurian - Human Resource)<br/>
+              honelignyohannes1@gmail.com (Honelign Yohannes - IT Department)
             </div>
           </Card>
         </div>

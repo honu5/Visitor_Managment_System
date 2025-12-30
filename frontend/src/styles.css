@@ -197,3 +197,7 @@ body{font-family: Arial, Helvetica, sans-serif;margin:0;padding:0}
 .role-root.kiosk{flex-direction:row-reverse}
 .role-root.kiosk .role-nav{min-width:200px}
 .role-root.kiosk .role-content{padding-top:80px}
+
+/* Final layout override: prevent fixed topbar from covering content */
+.topbar{position:fixed;top:0;left:0;right:0;z-index:1000}
+.content{padding-top:80px !important}

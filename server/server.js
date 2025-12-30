@@ -24,9 +24,14 @@ const DEMO_DEPARTMENTS = [
 ]
 
 const DEMO_HOST_TEMPLATES = [
-  { name: 'Dawit Habtamu', email: 'liranso392@gmail.com' },
-  { name: 'Honelign Yohannes', email: 'honelignyohannes1@gmail.com' },
-  { name: 'Pauwlos Betsegaw', email: 'liranso111@gmail.com' }
+  { name: 'Dawit Habtamu', email: 'liranso392@gmail.com', building: 'New Building', officeNumber: '7' },
+  { name: 'Honelign Yohannes', email: 'honelignyohannes1@gmail.com', building: 'New Building', officeNumber: '10' },
+  { name: 'Pauwlos Betsegaw', email: 'liranso111@gmail.com', building: 'New Building', officeNumber: '15' }
+]
+
+const DEMO_RECEPTIONIST_TEMPLATES = [
+  { name: 'Receptionist One', email: 'receptionist1@demo.local' },
+  { name: 'Receptionist Two', email: 'receptionist2@demo.local' }
 ]
 
 function normalizeEmail(v){
@@ -47,19 +52,41 @@ async function ensureDemoDepartment(name){
   }
 }
 
-async function ensureDemoHost({ email, name }){
+async function ensureDemoHost({ email, name, building, officeNumber }){
   const emailNorm = normalizeEmail(email)
   const hostName = String(name || '').trim()
   if(!emailNorm || !hostName) return null
 
   // If the host already exists anywhere, return it
   const existing = await prisma.host.findFirst({ where: { email: emailNorm }, orderBy: { id: 'asc' } }).catch(()=>null)
-  if(existing) return existing
+  if(existing){
+    // best-effort: ensure office/building are filled
+    const needsBuilding = !existing.building && building
+    const needsOffice = !existing.officeNumber && officeNumber
+    if(needsBuilding || needsOffice){
+      await prisma.host.updateMany({
+        where: { email: emailNorm },
+        data: {
+          ...(needsBuilding ? { building: String(building) } : {}),
+          ...(needsOffice ? { officeNumber: String(officeNumber) } : {})
+        }
+      }).catch(()=>null)
+    }
+    return existing
+  }
 
   // Create at least one department + host row for demo
   const dept = await ensureDemoDepartment(DEMO_DEPARTMENTS[0])
   try{
-    return await prisma.host.create({ data: { name: hostName, email: emailNorm, departmentId: dept?.id || null } })
+    return await prisma.host.create({
+      data: {
+        name: hostName,
+        email: emailNorm,
+        building: building ? String(building) : null,
+        officeNumber: officeNumber ? String(officeNumber) : null,
+        departmentId: dept?.id || null
+      }
+    })
   }catch(e){
     console.warn('ensureDemoHost failed:', e?.message || e)
     return null
@@ -69,16 +96,82 @@ async function ensureDemoHost({ email, name }){
 async function ensureDemoSeeded(){
   // Best-effort: create departments + demo hosts when DB is empty or missing hosts.
   try{
-    const anyHost = await prisma.host.findFirst({ select: { id: true } }).catch(()=>null)
-    const anyDept = await prisma.department.findFirst({ select: { id: true } }).catch(()=>null)
-    if(!anyDept){
-      for(const d of DEMO_DEPARTMENTS) await ensureDemoDepartment(d)
-    }
-    if(!anyHost){
-      for(const h of DEMO_HOST_TEMPLATES) await ensureDemoHost(h)
+    // Always ensure demo departments/hosts exist (idempotent)
+    for(const d of DEMO_DEPARTMENTS) await ensureDemoDepartment(d)
+    for(const h of DEMO_HOST_TEMPLATES) await ensureDemoHost(h)
+
+    // Seed a couple receptionists for demo (so admin screen isn't empty)
+    if(prisma.receptionist){
+      const anyRec = await prisma.receptionist.findFirst({ select: { id: true } }).catch(()=>null)
+      if(!anyRec){
+        const dept = await prisma.department.findFirst({ orderBy: { id: 'asc' } }).catch(()=>null)
+        const deptId = dept?.id || null
+        for(const r of DEMO_RECEPTIONIST_TEMPLATES){
+          const emailNorm = normalizeEmail(r.email)
+          const existing = await prisma.receptionist.findUnique({ where: { email: emailNorm } }).catch(()=>null)
+          if(existing) continue
+          await prisma.receptionist.create({ data: { name: r.name, email: emailNorm, departmentId: deptId } }).catch(()=>null)
+        }
+      }
     }
   }catch(e){
     console.warn('ensureDemoSeeded failed:', e?.message || e)
+  }
+}
+
+function startOfWeek(d){
+  const x = new Date(d)
+  x.setHours(0,0,0,0)
+  // Monday-based week
+  const day = (x.getDay() + 6) % 7
+  x.setDate(x.getDate() - day)
+  return x
+}
+
+function endOfWeek(d){
+  const s = startOfWeek(d)
+  const e = new Date(s)
+  e.setDate(e.getDate() + 7)
+  return e
+}
+
+function formatHostLocation(host){
+  const b = String(host?.building || '').trim()
+  const o = String(host?.officeNumber || '').trim()
+  if(b && o) return `${b}, Office #${o}`
+  if(b) return b
+  if(o) return `Office #${o}`
+  return ''
+}
+
+function formatArrivalNotice(){
+  return 'Please arrive at least 30 minutes early. Late visitors may not be served.'
+}
+
+async function enforceReapplyCooldown({ hostId, visitorEmail }){
+  const emailNorm = normalizeEmail(visitorEmail)
+  if(!emailNorm) return
+
+  const { hostIds } = await resolveHostGroup({ hostId })
+  const ids = (hostIds && hostIds.length) ? hostIds : [Number(hostId)]
+  const now = new Date()
+
+  const active = await prisma.hostVisitorCooldown.findFirst({
+    where: {
+      hostId: { in: ids },
+      visitorEmail: emailNorm,
+      blockedUntil: { gt: now }
+    },
+    orderBy: { blockedUntil: 'desc' }
+  }).catch(()=>null)
+
+  if(active?.blockedUntil){
+    const until = new Date(active.blockedUntil)
+    const remainingDays = Math.max(1, Math.ceil((until.getTime() - now.getTime()) / (24*60*60*1000)))
+    const untilText = until.toLocaleString()
+    const err = new Error(`You can request another appointment with this host after ${untilText} (about ${remainingDays} day(s)).`)
+    err.statusCode = 403
+    throw err
   }
 }
 
@@ -99,13 +192,26 @@ app.use((req, res, next) => {
   next()
 })
 
-// Host login: accepts email, must be one of seeded hosts
+// Host login: demo-only (fake Keycloak login gate)
 app.post('/api/host/login', async (req, res) => {
-  const { email } = req.body
+  const { email, password } = req.body || {}
   if(!email) return res.status(400).json({ error: 'email required' })
+  if(password === undefined || password === null || String(password).length === 0){
+    return res.status(400).json({ error: 'password required' })
+  }
   try{
     const emailNorm = normalizeEmail(email)
-    // Make demo reliable: if a known demo host logs in and isn't in DB yet, create it.
+
+    // Demo requirement: only allow these two host emails, password must be 12345.
+    const allowed = new Set([
+      normalizeEmail('liranso392@gmail.com'),
+      normalizeEmail('honelignyohannes1@gmail.com')
+    ])
+    if(!allowed.has(emailNorm) || String(password) !== '12345'){
+      return res.status(401).json({ error: 'Unauthorized', message: 'Invalid username or password' })
+    }
+
+    // Make demo reliable: ensure the host row exists.
     const demo = DEMO_HOST_TEMPLATES.find(h => normalizeEmail(h.email) === emailNorm)
     if(demo) await ensureDemoHost(demo)
 
@@ -191,10 +297,11 @@ app.post('/api/host/pending/:id/approve', async (req, res) => {
       data: { status: 'approved', scheduledAt: when, publicId: pubId }
     })
 
-    // notify visitor by email
+    // notify visitor by email (include arrival notice + host office/building)
     const dateTimeText = when.toLocaleString(undefined, { weekday:'long', year:'numeric', month:'long', day:'numeric', hour:'2-digit', minute:'2-digit' })
-    const message = `Good news your appointment is accepted for ${dateTimeText}. Please be there before 30 minutes of approvements late visitor may not be served`
-    await prisma.notification.create({ data: { recipientEmail: appt.email, message } }).catch(()=>null)
+    const locationLine = ' Location: New Building Office #7.'
+    const message = `Good news! Your appointment ${appt.publicId ? `(${appt.publicId}) ` : ''}is approved for ${dateTimeText}. ${formatArrivalNotice()}${locationLine}`
+    await prisma.notification.create({ data: { recipientEmail: normalizeEmail(appt.email), message } }).catch(()=>null)
 
     // demo visitor endpoint (not user-specific)
     await prisma.notification.create({ data: { recipientEmail: DEMO_RECIPIENT_VISITOR, message } }).catch(()=>null)
@@ -204,8 +311,8 @@ app.post('/api/host/pending/:id/approve', async (req, res) => {
     const receptionistMessage = `${hostName} approved appointment ${appt.publicId} for ${appt.fullName} at ${dateTimeText}.`
     await prisma.notification.create({ data: { recipientEmail: DEMO_RECIPIENT_RECEPTIONIST, message: receptionistMessage } }).catch(()=>null)
 
-    // notify visitor demo bucket with public id
-    const visitorMessageWithId = `Your appointment ${appt.publicId} is approved for ${dateTimeText}.`
+    // keep demo visitor bucket concise as well
+    const visitorMessageWithId = `Your appointment ${appt.publicId} is approved for ${dateTimeText}. ${formatArrivalNotice()}${locationLine}`
     await prisma.notification.create({ data: { recipientEmail: DEMO_RECIPIENT_VISITOR, message: visitorMessageWithId } }).catch(()=>null)
 
     res.json({ success: true, appointment: appt })
@@ -214,7 +321,42 @@ app.post('/api/host/pending/:id/approve', async (req, res) => {
 app.post('/api/host/pending/:id/reject', async (req, res) => {
   const id = Number(req.params.id)
   try{
+    const cooldownDaysRaw = req.body?.cooldownDays
+    const cooldownDays = Number(cooldownDaysRaw)
+    if(!Number.isFinite(cooldownDays) || Number.isNaN(cooldownDays) || cooldownDays < 0){
+      return res.status(400).json({ error: 'cooldownDays (number of days) required' })
+    }
+
+    const apptBefore = await prisma.appointment.findUnique({ where: { id } })
+    if(!apptBefore) return res.status(404).json({ error: 'appointment not found' })
+
     const appt = await prisma.appointment.update({ where: { id }, data: { status: 'rejected', scheduledAt: null } })
+
+    const visitorEmail = normalizeEmail(apptBefore.email)
+    if(visitorEmail){
+      const { host: apptHost, hostIds } = await resolveHostGroup({ hostId: apptBefore.hostId })
+      const ids = (hostIds && hostIds.length) ? hostIds : [apptBefore.hostId]
+      const now = new Date()
+      const blockedUntil = new Date(now.getTime() + Math.round(cooldownDays) * 24*60*60*1000)
+
+      for(const hostId of ids){
+        await prisma.hostVisitorCooldown.upsert({
+          where: { hostId_visitorEmail: { hostId: Number(hostId), visitorEmail } },
+          update: { blockedUntil },
+          create: { hostId: Number(hostId), visitorEmail, blockedUntil }
+        }).catch(()=>null)
+      }
+
+      const apptIdBold = `**#${apptBefore.id}**`
+      const untilText = blockedUntil.toLocaleString()
+      const locationText = formatHostLocation(apptHost)
+      const locationLine = locationText ? ` Location: ${locationText}.` : ''
+      const message = `Your appointment request ${apptIdBold} was rejected. You can make a new request again after ${untilText} (${Math.round(cooldownDays)} day(s) from now).${locationLine}`
+
+      await prisma.notification.create({ data: { recipientEmail: visitorEmail, message } }).catch(()=>null)
+      await prisma.notification.create({ data: { recipientEmail: DEMO_RECIPIENT_VISITOR, message } }).catch(()=>null)
+    }
+
     res.json({ success: true, appointment: appt })
   }catch(err){ console.error(err); res.status(500).json({ error: 'failed to reject' }) }
 })
@@ -485,20 +627,22 @@ app.post('/api/host/appointment', async (req, res) => {
   }
 
   try{
-    let visitor = await prisma.visitor.findUnique({ where: { email } })
+    const emailNorm = normalizeEmail(email)
+    let visitor = await prisma.visitor.findUnique({ where: { email: emailNorm } })
     if(!visitor){
-      visitor = await prisma.visitor.create({ data: { username: fullName, email } })
+      visitor = await prisma.visitor.create({ data: { username: fullName, email: emailNorm } })
     }
 
     const appt = await prisma.appointment.create({
       data: {
         hostId: Number(hostId),
         fullName,
-        email,
+        email: emailNorm,
         phone: phone || null,
         description: description || null,
         visitorType: visitorType || null,
         visitorId: visitor.id,
+        source: 'host',
         status: 'approved',
         scheduledAt: when
       }
@@ -506,7 +650,7 @@ app.post('/api/host/appointment', async (req, res) => {
 
     const dateTimeText = when.toLocaleString(undefined, { weekday:'long', year:'numeric', month:'long', day:'numeric', hour:'2-digit', minute:'2-digit' })
     const message = `Good news your appointment is accepted for ${dateTimeText}. Please be there before 30 minutes of approvements late visitor may not be served`
-    await prisma.notification.create({ data: { recipientEmail: email, message } }).catch(()=>null)
+    await prisma.notification.create({ data: { recipientEmail: emailNorm, message } }).catch(()=>null)
 
     res.json({ success: true, appointment: appt })
   }catch(err){ console.error(err); res.status(500).json({ error: 'failed to create host appointment' }) }
@@ -759,6 +903,10 @@ app.post('/api/receptionist/appointments', async (req, res) => {
       return res.status(400).json({ error: 'host not found' })
     }
 
+    if(email){
+      await enforceReapplyCooldown({ hostId: hostConnectId, visitorEmail: email })
+    }
+
     const appt = await prisma.appointment.create({
       data: {
         hostId: hostConnectId,
@@ -768,6 +916,7 @@ app.post('/api/receptionist/appointments', async (req, res) => {
         description: description || null,
         visitorType: visitorType || null,
         visitorId: visitor ? visitor.id : null,
+        source: 'receptionist',
         status: 'pending',
         scheduledAt: null
       },
@@ -793,7 +942,11 @@ app.post('/api/receptionist/appointments', async (req, res) => {
     }
 
     res.json({ success: true, appointment: appt })
-  }catch(err){ console.error(err); res.status(500).json({ error: 'failed to create receptionist appointment' }) }
+  }catch(err){
+    console.error(err)
+    const code = err?.statusCode || 500
+    res.status(code).json({ error: err?.message || 'failed to create receptionist appointment' })
+  }
 })
 
 app.get('/api/receptionist/notifications', async (req, res) => {
@@ -945,6 +1098,8 @@ app.post('/appointments', async (req, res) => {
       return res.status(400).json({ error: 'host not found (invalid hostId/hostName)' })
     }
 
+    await enforceReapplyCooldown({ hostId: hostConnectId, visitorEmail: email })
+
     // create request as PENDING (unscheduled) — will not appear in Next appointments until approved
     const appt = await prisma.appointment.create({
       data: {
@@ -955,6 +1110,7 @@ app.post('/appointments', async (req, res) => {
         visitorType: visitorType || null,
         hostId: hostConnectId,
         visitorId: visitor ? visitor.id : null,
+        source: 'visitor',
         status: 'pending',
         scheduledAt: null
       }
@@ -984,7 +1140,8 @@ app.post('/appointments', async (req, res) => {
     res.json({ success: true, appointment: appt })
   }catch(err){
     console.error(err)
-    res.status(500).json({ error: 'failed to create appointment', details: err.message })
+    const code = err?.statusCode || 500
+    res.status(code).json({ error: err?.message || 'failed to create appointment' })
   }
 })
 
@@ -1041,6 +1198,10 @@ app.post('/appointments/kiosk', async (req, res) => {
       return res.status(400).json({ error: 'host not found' })
     }
 
+    if(email){
+      await enforceReapplyCooldown({ hostId: hostConnectId, visitorEmail: email })
+    }
+
     const appt = await prisma.appointment.create({
       data: {
         hostId: hostConnectId,
@@ -1050,6 +1211,7 @@ app.post('/appointments/kiosk', async (req, res) => {
         description: description || null,
         visitorType: visitorType || null,
         visitorId: visitor ? visitor.id : null,
+        source: 'kiosk',
         status: 'pending',
         scheduledAt: null
       }
@@ -1074,7 +1236,11 @@ app.post('/appointments/kiosk', async (req, res) => {
     }
 
     res.json({ success: true, appointment: appt })
-  }catch(err){ console.error(err); res.status(500).json({ error: 'failed to create kiosk appointment' }) }
+  }catch(err){
+    console.error(err)
+    const code = err?.statusCode || 500
+    res.status(code).json({ error: err?.message || 'failed to create kiosk appointment' })
+  }
 })
 
 // Kiosk: lookup appointment by publicId or email
@@ -1189,6 +1355,272 @@ app.delete('/api/visitor/notifications/:id', async (req, res) => {
   }catch(err){
     console.error(err)
     res.status(500).json({ error: 'failed to delete notification' })
+  }
+})
+
+// ---------------- Admin API ----------------
+
+// Admin analytics (numbers only)
+app.get('/api/admin/analytics', async (req, res) => {
+  try{
+    await ensureDemoSeeded()
+
+    const now = new Date()
+    const from = startOfWeek(now)
+    const to = endOfWeek(now)
+
+    const weekAppointments = await prisma.appointment.findMany({
+      where: { createdAt: { gte: from, lt: to } },
+      select: { id: true, source: true, email: true, scheduledAt: true }
+    })
+
+    const appointmentsThisWeek = weekAppointments.length
+    const hoursThisWeek = weekAppointments.filter(a => a.scheduledAt).length
+    const receptionistRequestsThisWeek = weekAppointments.filter(a => a.source === 'receptionist').length
+
+    const kioskVisitorEmails = new Set(
+      weekAppointments
+        .filter(a => a.source === 'kiosk')
+        .map(a => normalizeEmail(a.email))
+        .filter(Boolean)
+    )
+    const onlineVisitorEmails = new Set(
+      weekAppointments
+        .filter(a => a.source === 'visitor')
+        .map(a => normalizeEmail(a.email))
+        .filter(Boolean)
+    )
+
+    const departmentsCount = await prisma.department.count().catch(()=>0)
+
+    // host grouping by email (seed may create duplicates)
+    const hostRows = await prisma.host.findMany({ select: { email: true } }).catch(()=>[])
+    const hostEmails = new Set((hostRows||[]).map(h => normalizeEmail(h.email)).filter(Boolean))
+    const hostsCount = hostEmails.size
+
+    const appointmentsTotal = await prisma.appointment.count().catch(()=>0)
+
+    res.json({
+      week: {
+        from: from.toISOString(),
+        to: to.toISOString(),
+        appointments: appointmentsThisWeek,
+        appointmentHours: hoursThisWeek,
+        visitorsKiosk: kioskVisitorEmails.size,
+        visitorsOnline: onlineVisitorEmails.size,
+        receptionistRequests: receptionistRequestsThisWeek
+      },
+      system: {
+        departments: departmentsCount,
+        hosts: hostsCount,
+        appointmentsTotal
+      }
+    })
+  }catch(err){
+    console.error(err)
+    res.status(500).json({ error: 'failed to fetch analytics' })
+  }
+})
+
+// Admin hosts (grouped by email)
+app.get('/api/admin/hosts', async (req, res) => {
+  try{
+    await ensureDemoSeeded()
+    const rows = await prisma.host.findMany({ include: { department: true }, orderBy: { id: 'asc' } })
+    const byEmail = new Map()
+    for(const h of rows){
+      const emailNorm = normalizeEmail(h.email)
+      if(!emailNorm) continue
+      if(!byEmail.has(emailNorm)){
+        byEmail.set(emailNorm, {
+          id: h.id,
+          name: h.name,
+          email: emailNorm,
+          departmentId: h.departmentId || null,
+          department: h.department?.name || ''
+        })
+      }
+    }
+    res.json(Array.from(byEmail.values()))
+  }catch(err){
+    console.error(err)
+    res.status(500).json({ error: 'failed to fetch hosts' })
+  }
+})
+
+app.post('/api/admin/hosts', async (req, res) => {
+  try{
+    await ensureDemoSeeded()
+    const { name, email, departmentId, department } = req.body || {}
+    const hostName = String(name || '').trim()
+    const emailNorm = normalizeEmail(email)
+    if(!hostName || !emailNorm) return res.status(400).json({ error: 'name and email required' })
+
+    let deptId = null
+    if(departmentId && !Number.isNaN(Number(departmentId))) deptId = Number(departmentId)
+    if(!deptId && department){
+      const deptName = String(department).trim()
+      if(deptName){
+        const dept = await prisma.department.findUnique({ where: { name: deptName } }).catch(()=>null)
+        deptId = dept?.id || (await prisma.department.create({ data: { name: deptName } }).catch(()=>null))?.id || null
+      }
+    }
+
+    const existing = await prisma.host.findFirst({ where: { email: emailNorm }, orderBy: { id: 'asc' } }).catch(()=>null)
+    if(existing) return res.status(409).json({ error: 'host already exists with this email' })
+
+    const created = await prisma.host.create({ data: { name: hostName, email: emailNorm, departmentId: deptId } })
+    res.json({ success: true, host: created })
+  }catch(err){
+    console.error(err)
+    res.status(500).json({ error: 'failed to create host' })
+  }
+})
+
+app.put('/api/admin/hosts/:id', async (req, res) => {
+  const id = Number(req.params.id)
+  if(!id || Number.isNaN(id)) return res.status(400).json({ error: 'invalid id' })
+  try{
+    const { name, email, departmentId, department } = req.body || {}
+    const base = await prisma.host.findUnique({ where: { id } }).catch(()=>null)
+    if(!base) return res.status(404).json({ error: 'host not found' })
+
+    const nextName = (name !== undefined) ? String(name || '').trim() : undefined
+    const nextEmail = (email !== undefined) ? normalizeEmail(email || '') : undefined
+
+    let deptId = undefined
+    if(departmentId !== undefined){
+      deptId = (departmentId && !Number.isNaN(Number(departmentId))) ? Number(departmentId) : null
+    }
+    if(deptId === undefined && department !== undefined){
+      const deptName = String(department || '').trim()
+      if(!deptName) deptId = null
+      else {
+        const dept = await prisma.department.findUnique({ where: { name: deptName } }).catch(()=>null)
+        deptId = dept?.id || (await prisma.department.create({ data: { name: deptName } }).catch(()=>null))?.id || null
+      }
+    }
+
+    const groupEmail = normalizeEmail(base.email)
+    await prisma.host.updateMany({
+      where: { email: groupEmail },
+      data: {
+        ...(nextName !== undefined ? { name: nextName } : {}),
+        ...(nextEmail !== undefined ? { email: nextEmail } : {}),
+        ...(deptId !== undefined ? { departmentId: deptId } : {})
+      }
+    })
+
+    res.json({ success: true })
+  }catch(err){
+    console.error(err)
+    res.status(500).json({ error: 'failed to update host' })
+  }
+})
+
+app.delete('/api/admin/hosts/:id', async (req, res) => {
+  const id = Number(req.params.id)
+  if(!id || Number.isNaN(id)) return res.status(400).json({ error: 'invalid id' })
+  try{
+    const base = await prisma.host.findUnique({ where: { id } }).catch(()=>null)
+    if(!base) return res.status(404).json({ error: 'host not found' })
+    const groupEmail = normalizeEmail(base.email)
+    await prisma.host.deleteMany({ where: { email: groupEmail } })
+    res.json({ success: true })
+  }catch(err){
+    console.error(err)
+    res.status(500).json({ error: 'failed to delete host' })
+  }
+})
+
+// Admin receptionists
+app.get('/api/admin/receptionists', async (req, res) => {
+  try{
+    await ensureDemoSeeded()
+    const rows = await prisma.receptionist.findMany({ include: { department: true }, orderBy: { id: 'asc' } })
+    const mapped = rows.map(r => ({
+      id: r.id,
+      name: r.name,
+      email: r.email,
+      departmentId: r.departmentId || null,
+      department: r.department?.name || ''
+    }))
+    res.json(mapped)
+  }catch(err){
+    console.error(err)
+    res.status(500).json({ error: 'failed to fetch receptionists' })
+  }
+})
+
+app.post('/api/admin/receptionists', async (req, res) => {
+  try{
+    await ensureDemoSeeded()
+    const { name, email, departmentId, department } = req.body || {}
+    const recName = String(name || '').trim()
+    const emailNorm = normalizeEmail(email)
+    if(!recName || !emailNorm) return res.status(400).json({ error: 'name and email required' })
+
+    let deptId = null
+    if(departmentId && !Number.isNaN(Number(departmentId))) deptId = Number(departmentId)
+    if(!deptId && department){
+      const deptName = String(department).trim()
+      if(deptName){
+        const dept = await prisma.department.findUnique({ where: { name: deptName } }).catch(()=>null)
+        deptId = dept?.id || (await prisma.department.create({ data: { name: deptName } }).catch(()=>null))?.id || null
+      }
+    }
+
+    const created = await prisma.receptionist.create({ data: { name: recName, email: emailNorm, departmentId: deptId } })
+    res.json({ success: true, receptionist: created })
+  }catch(err){
+    console.error(err)
+    res.status(500).json({ error: 'failed to create receptionist' })
+  }
+})
+
+app.put('/api/admin/receptionists/:id', async (req, res) => {
+  const id = Number(req.params.id)
+  if(!id || Number.isNaN(id)) return res.status(400).json({ error: 'invalid id' })
+  try{
+    const { name, email, departmentId, department } = req.body || {}
+
+    let deptId = undefined
+    if(departmentId !== undefined){
+      deptId = (departmentId && !Number.isNaN(Number(departmentId))) ? Number(departmentId) : null
+    }
+    if(deptId === undefined && department !== undefined){
+      const deptName = String(department || '').trim()
+      if(!deptName) deptId = null
+      else {
+        const dept = await prisma.department.findUnique({ where: { name: deptName } }).catch(()=>null)
+        deptId = dept?.id || (await prisma.department.create({ data: { name: deptName } }).catch(()=>null))?.id || null
+      }
+    }
+
+    await prisma.receptionist.update({
+      where: { id },
+      data: {
+        ...(name !== undefined ? { name: String(name || '').trim() } : {}),
+        ...(email !== undefined ? { email: normalizeEmail(email || '') } : {}),
+        ...(deptId !== undefined ? { departmentId: deptId } : {})
+      }
+    })
+    res.json({ success: true })
+  }catch(err){
+    console.error(err)
+    res.status(500).json({ error: 'failed to update receptionist' })
+  }
+})
+
+app.delete('/api/admin/receptionists/:id', async (req, res) => {
+  const id = Number(req.params.id)
+  if(!id || Number.isNaN(id)) return res.status(400).json({ error: 'invalid id' })
+  try{
+    await prisma.receptionist.delete({ where: { id } })
+    res.json({ success: true })
+  }catch(err){
+    console.error(err)
+    res.status(500).json({ error: 'failed to delete receptionist' })
   }
 })
 

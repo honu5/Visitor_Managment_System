@@ -1,5 +1,5 @@
 import React from 'react'
-import { Routes, Route, Link, NavLink, useLocation } from 'react-router-dom'
+import { Routes, Route, Link, NavLink, useLocation, Navigate } from 'react-router-dom'
 
 import VisitorAppointments from './pages/Visitor/Appointments'
 import VisitorHostList from './pages/Visitor/HostList'
@@ -35,7 +35,6 @@ import ReceptionistHistory from './pages/Receptionist/History'
 
 import AdminHosts from './pages/Admin/Hosts'
 import AdminReceptionists from './pages/Admin/Receptionists'
-import AdminVisitors from './pages/Admin/Visitors'
 import AdminAnalytics from './pages/Admin/Analytics'
 
 import VisitorLayout from './components/Layout/VisitorLayout'
@@ -109,9 +108,9 @@ export default function App(){
           </Route>
 
           <Route path="/admin/*" element={<AdminLayout/>}>
+            <Route index element={<Navigate to="analytics" replace />} />
             <Route path="hosts" element={<AdminHosts/>} />
             <Route path="receptionists" element={<AdminReceptionists/>} />
-            <Route path="visitors" element={<AdminVisitors/>} />
             <Route path="analytics" element={<AdminAnalytics/>} />
           </Route>
         </Routes>
