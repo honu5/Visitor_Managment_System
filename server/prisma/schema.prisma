@@ -1,0 +1,68 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Visitor {
+  id         Int          @id @default(autoincrement())
+  username   String?
+  email      String?      @unique
+  phone      String?
+  createdAt  DateTime     @default(now())
+  appointments Appointment[]
+}
+
+model Department {
+  id    Int    @id @default(autoincrement())
+  name  String @unique
+  hosts Host[]
+}
+
+model Host {
+  id           Int          @id @default(autoincrement())
+  name         String
+  email        String
+  department   Department?  @relation(fields: [departmentId], references: [id])
+  departmentId Int?
+  appointments Appointment[]
+  blocks       HostBlock[]
+}
+
+model HostBlock {
+  id        Int      @id @default(autoincrement())
+  host      Host     @relation(fields: [hostId], references: [id])
+  hostId    Int
+  startAt   DateTime
+  createdAt DateTime @default(now())
+
+  @@unique([hostId, startAt])
+}
+
+model Notification {
+  id             Int      @id @default(autoincrement())
+  recipientEmail String
+  message        String
+  createdAt      DateTime @default(now())
+}
+
+model Appointment {
+  id          Int      @id @default(autoincrement())
+  fullName    String
+  email       String
+  phone       String?
+  description String?
+  visitorType String?
+  host        Host     @relation(fields: [hostId], references: [id])
+  hostId      Int
+  visitor     Visitor? @relation(fields: [visitorId], references: [id])
+  visitorId   Int?
+  status      String   @default("pending")
+  scheduledAt DateTime?
+  rescheduledAt DateTime?
+  publicId    String?  @unique
+  createdAt   DateTime @default(now())
+}

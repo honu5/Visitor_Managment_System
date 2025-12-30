@@ -5,11 +5,28 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="350d4f1d-3b95-4401-8e3c-aac1baaa678b" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/backend/src/main/java/com/liranso/vms/visitormanagement/config/WebConfig.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/src/main/java/com/liranso/vms/visitormanagement/controller/IntegrationController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/src/main/java/com/liranso/vms/visitormanagement/service/InMemoryDataService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/liranso/vms/visitormanagement/controller/HostController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/liranso/vms/visitormanagement/controller/HostController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/liranso/vms/visitormanagement/controller/ReceptionistController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/liranso/vms/visitormanagement/controller/ReceptionistController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/liranso/vms/visitormanagement/controller/VisitorController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/liranso/vms/visitormanagement/controller/VisitorController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/liranso/vms/visitormanagement/service/HostService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/liranso/vms/visitormanagement/service/HostService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/App.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/App.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/api/adminApi.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/api/adminApi.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/api/hostApi.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/api/hostApi.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/api/kioskApi.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/api/kioskApi.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/api/receptionistApi.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/api/receptionistApi.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/api/visitorApi.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/api/visitorApi.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Layout/HostLayout.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Layout/HostLayout.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Layout/KioskLayout.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Layout/KioskLayout.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Layout/ReceptionistLayout.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Layout/ReceptionistLayout.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/pages/Host/Home.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/Host/Home.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/pages/Host/Notifications.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/Host/Notifications.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/pages/Host/Pending.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/Host/Pending.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/pages/Host/Schedule.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/Host/Schedule.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/pages/Kiosk/KioskHome.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/Kiosk/KioskHome.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/pages/Receptionist/Notifications.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/Receptionist/Notifications.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/pages/Receptionist/Visitors.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/Receptionist/Visitors.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/pages/Visitor/Appointments.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/Visitor/Appointments.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/styles.css" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/styles.css" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -118,6 +135,12 @@
       <workItem from="1765373726437" duration="1506000" />
       <workItem from="1765375816534" duration="786000" />
       <workItem from="1765394605790" duration="6628000" />
+      <workItem from="1766042207497" duration="2960000" />
+      <workItem from="1766049333758" duration="2964000" />
+      <workItem from="1766079070785" duration="11548000" />
+      <workItem from="1766237741000" duration="2215000" />
+      <workItem from="1766259810125" duration="2188000" />
+      <workItem from="1766386516431" duration="1930000" />
     </task>
     <servers />
   </component>

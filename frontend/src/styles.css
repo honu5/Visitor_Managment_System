@@ -16,6 +16,10 @@
 .form-label{font-weight:600;margin-bottom:6px}
 .form-input{padding:12px;border:1px solid #e1e6ee;border-radius:8px;font-size:15px}
 .button{padding:10px 16px;border-radius:8px;background:#036;color:#fff;border:none;cursor:pointer}
+/* additional colored buttons */
+.btn-blue{background:#0a84ff;color:#fff;padding:8px 12px;border-radius:8px;border:none;cursor:pointer}
+.btn-red{background:#c33;color:#fff;padding:8px 12px;border-radius:8px;border:none;cursor:pointer}
+.btn-green{background:#2ea44f;color:#fff;padding:8px 12px;border-radius:8px;border:none;cursor:pointer}
 
 .role-root{display:flex;gap:20px;align-items:flex-start}
 .role-nav{min-width:220px;background:#fff;border:1px solid #e9edf3;padding:12px;border-radius:8px;margin-top:0}
@@ -38,7 +42,7 @@
 .nine-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;max-width:980px;margin:0 auto}
 .day-card{min-height:160px;display:flex;flex-direction:column}
 .slot{padding:8px;border-radius:8px;margin-bottom:8px}
-.slot-free{background:#e6ffed;color:#064}
+.slot-free{background:#fff;color:#000;border:1px solid #eee}
 .slot-blocked{background:#ffcfcf;color:#700}
 .slot-appointment{background:#fff;border:1px solid #eee}
 
@@ -46,12 +50,45 @@
 	.role-root{flex-direction:column}
 	.role-nav{width:100%}
 }
+/* Host UI polish overrides */
+.content{padding:12px;max-width:1200px;margin:0 auto}
+.host-home-grid{display:grid;grid-template-columns:1fr;gap:16px;align-items:start}
+.make-appointment-button{display:inline-flex;align-items:center;gap:8px;padding:12px 18px;border-radius:10px;background:#036;color:#fff;border:none;font-weight:700;box-shadow:0 6px 18px rgba(3,102,204,0.12);cursor:pointer}
+.notification-item{background:linear-gradient(180deg,#ffffff,#fbfdff);padding:12px;border-radius:8px;border:1px solid #eef3f8;margin-bottom:8px}
+.history-item{background:linear-gradient(180deg,#ffffff,#fcfcff);padding:12px;border-radius:8px;border:1px solid #f1f5f9;margin-bottom:8px}
+.host-card{padding:14px;border-radius:10px;border:1px solid #eef2f7;background:#fff;text-align:left;width:100%}
+.host-card .title{font-weight:700}
+
+.next-appointments-row{display:flex;flex-direction:column;gap:12px}
+.next-appointment-card{width:100%;padding:16px;background:#fff;border:1px solid #eef3f8;border-radius:10px}
+.day-card .day-actions{margin-top:8px;display:flex;justify-content:flex-end}
+.day-plus-button{background:#0a84ff;color:#fff;border:none;padding:6px 10px;border-radius:8px;cursor:pointer}
+.wide-card{max-width:1400px;margin:0 auto}
+
+.slot-has-appointments{background:linear-gradient(180deg,#e8fff0,#e6ffed);color:#044;border:1px solid #cfeed6}
+
+/* Floating modal for pending detail */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.32);display:flex;align-items:center;justify-content:center;z-index:12000}
+.floating-card{width:560px;max-width:95%;background:#fff;border-radius:12px;padding:18px;box-shadow:0 18px 60px rgba(5,20,60,0.38);position:relative}
+.floating-card .close-btn{position:absolute;right:10px;top:8px;border:none;background:transparent;color:#333;font-size:20px;cursor:pointer}
+.floating-card h3{margin-top:0}
+
+@media(max-width:900px){
+  .host-home-grid{grid-template-columns:1fr;}
+  .content{padding:12px}
+}
 
 /* Make topbar fixed and taller; prevent content overlap */
 .topbar{position:fixed;top:0;left:0;right:0;height:50px;padding:0 18px;display:flex;align-items:center;z-index:1000}
 .topbar h1{font-size:28px}
 .content{padding-top:140px}
 .role-content{padding-top:20px}
+
+/* Topbar kiosk nav on the right */
+.kiosk-top-nav{display:flex;gap:8px;align-items:center}
+.top-nav-link{color:#fff;padding:8px 10px;border-radius:6px;text-decoration:none;opacity:0.95}
+.top-nav-link:hover{background:rgba(255,255,255,0.08)}
+.top-nav-active{background:rgba(255,255,255,0.12);color:#fff;padding:8px 10px;border-radius:6px;text-decoration:none}
 
 .nav-item{padding:8px 12px;color:#033;background:transparent;border-radius:6px;text-decoration:none}
 .nav-item:hover{background:rgba(0,0,0,0.04)}
@@ -156,3 +193,7 @@ body{font-family: Arial, Helvetica, sans-serif;margin:0;padding:0}
 	.role-root{flex-direction:column}
 	.role-nav{width:100%}
 }
+/* Kiosk layout: place role-nav on the right and avoid topbar overlap */
+.role-root.kiosk{flex-direction:row-reverse}
+.role-root.kiosk .role-nav{min-width:200px}
+.role-root.kiosk .role-content{padding-top:80px}

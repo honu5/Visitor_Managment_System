@@ -13,7 +13,10 @@ export default function VisitorAppointments(){
   const hostName = query.get('host_name') || ''
   const hostId = query.get('host_id') || ''
 
-  const [form,setForm]=useState({fullName:'',email:'',phone:'',description:'',visitorType:'Guest'})
+  // Demo visitor prefill
+  const DEMO_VISITOR = { fullName: '', email: '', phone: '' }
+
+  const [form,setForm]=useState({fullName:DEMO_VISITOR.fullName,email:DEMO_VISITOR.email,phone:DEMO_VISITOR.phone,description:'',visitorType:'Guest'})
   const [result,setResult]=useState(null)
   const [success,setSuccess]=useState(null)
 
@@ -32,11 +35,16 @@ export default function VisitorAppointments(){
       setResult(res)
       setSuccess('Appointment submitted — you will be notified when the host accepts it.')
 
-      const now = new Date().toISOString()
-      const note = {id: `local-${Date.now()}`, message: `Appointment request sent to ${hostName}. You will be notified when the host accepts it.`, time: now}
-      const existing = JSON.parse(localStorage.getItem('vms_notifications') || '[]')
-      existing.unshift(note)
-      localStorage.setItem('vms_notifications', JSON.stringify(existing))
+      // remember visitor email for fetching notifications
+      if(form.email){
+        localStorage.setItem('vms_visitor_email', form.email)
+        try{
+          const v = JSON.parse(localStorage.getItem('vms_visitor') || 'null')
+          if(v && !v.email){
+            localStorage.setItem('vms_visitor', JSON.stringify({ ...v, email: form.email }))
+          }
+        }catch(e){}
+      }
 
       setTimeout(()=>navigate('/visitor/notifications'),1200)
     }catch(err){

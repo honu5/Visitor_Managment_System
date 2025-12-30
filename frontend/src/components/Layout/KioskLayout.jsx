@@ -3,10 +3,7 @@ import { NavLink, Outlet } from 'react-router-dom'
 
 export default function KioskLayout(){
   return (
-    <div className="role-root">
-      <nav className="role-nav">
-        <NavLink to="/kiosk" className={({isActive})=> isActive? 'nav-active':'nav-item'}>Kiosk</NavLink>
-      </nav>
+    <div className="role-root kiosk">
       <section className="role-content">
         <Outlet />
       </section>
