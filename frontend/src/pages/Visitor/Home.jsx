@@ -51,8 +51,8 @@ export default function VisitorHome(){
     return (
       <div>
         <h2>Hosts — {dept?.name || deptQuery}</h2>
-        <div style={{display:'flex',justifyContent:'center'}}>
-          <div style={{width:'75%',display:'flex',flexDirection:'column',gap:12}}>
+        <div>
+          <div className="host-list">
             {(dept?.hosts||[]).map(h=> (
               <Card key={h.id}>
                 <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',gap:12}}>
@@ -72,21 +72,30 @@ export default function VisitorHome(){
     )
   }
 
-  // Departments row taking 75% width centered
+  // Departments displayed as responsive card grid
+  const descriptions = {
+    'Human resource': 'Employee relations, hiring and onboarding services.',
+    'IT': 'Information technology and systems support.',
+    'Customer service': 'Customer inquiries and support services.',
+    'Logistics': 'Supply chain and transport coordination.',
+    'Administrative office': 'General administrative and office services.'
+  }
+
   return (
     <div>
       <h2>Departments</h2>
-      <div style={{display:'flex',justifyContent:'center'}}>
-        <div style={{width:'75%',display:'flex',flexDirection:'column',gap:12}}>
-          {departments.map(d => (
-            <Card key={d.name}>
-              <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',gap:12}}>
-                <div style={{fontWeight:700}}>{d.name}</div>
-                <button className="button" onClick={()=>onSelectDept(d)}>View hosts</button>
-              </div>
-            </Card>
-          ))}
-        </div>
+      <div className="department-grid">
+        {(departments||[]).slice(0,5).map(d => (
+          <div key={d.id} className="department-card slide-up">
+            <div>
+              <h3>{d.name}</h3>
+              <p>{descriptions[d.name] || 'Department services and contacts.'}</p>
+            </div>
+            <div className="enter-row">
+              <button className="enter-btn" onClick={()=>onSelectDept(d)}>View Hosts</button>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   )

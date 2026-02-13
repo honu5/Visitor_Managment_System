@@ -73,20 +73,20 @@ export default function MakeAppointment(){
     <div>
       <h2>Make Appointment</h2>
       <Card>
-        <form onSubmit={submit} style={{display:'grid',gap:12,maxWidth:680}}>
-          <div>
+        <form onSubmit={submit} style={{display:'grid',gap:16,maxWidth:720}}>
+          <div className="form-row">
             <label className="form-label">Name</label>
             <input className="form-input" value={name} onChange={e=>setName(e.target.value)} required />
           </div>
-          <div>
+          <div className="form-row">
             <label className="form-label">Email</label>
             <input className="form-input" value={email} onChange={e=>setEmail(e.target.value)} />
           </div>
-          <div>
+          <div className="form-row">
             <label className="form-label">Phone</label>
             <input className="form-input" value={phone} onChange={e=>setPhone(e.target.value)} />
           </div>
-          <div>
+          <div className="form-row">
             <label className="form-label">Visitor Type</label>
             <select className="form-input" value={type} onChange={e=>setType(e.target.value)}>
               <option value="visitor">Visitor</option>
@@ -94,15 +94,15 @@ export default function MakeAppointment(){
               <option value="delivery">Delivery</option>
             </select>
           </div>
-          <div>
+          <div className="form-row">
             <label className="form-label">Host</label>
             <select className="form-input" value={hostId} onChange={e=>setHostId(e.target.value)}>
               {hosts.map(h=> <option key={h.id} value={String(h.id)}>{h.name}</option>)}
             </select>
           </div>
-          <div>
+          <div className="form-row">
             <label className="form-label">Description</label>
-            <textarea className="form-input" value={desc} onChange={e=>setDesc(e.target.value)} />
+            <textarea className="form-input" value={desc} onChange={e=>setDesc(e.target.value)} style={{minHeight:120,padding:12}} />
           </div>
           <div style={{display:'flex',gap:8,justifyContent:'flex-end'}}>
             <button type="button" className="button" onClick={()=>nav(-1)}>Cancel</button>

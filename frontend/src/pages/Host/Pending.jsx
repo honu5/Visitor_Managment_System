@@ -7,14 +7,21 @@ export default function HostPending(){
   const [scheduleDate, setScheduleDate] = useState('')
   const [scheduleTime, setScheduleTime] = useState('')
   const [actionError, setActionError] = useState('')
+  const [loadError, setLoadError] = useState('')
 
   useEffect(()=>{
     async function load(){
       try{
         if(!host) return
-        const res = await fetch(`/api/host/pending?hostId=${host.id}`)
-        const json = await res.json()
-        setData(json)
+        setLoadError('')
+        const res = await fetch(`/api/host/pending?hostId=${host.id}&email=${encodeURIComponent(host.email || '')}`)
+        const json = await res.json().catch(()=>null)
+        if(!res.ok){
+          setLoadError(json?.error || 'Failed to load pending appointments')
+          setData([])
+          return
+        }
+        setData(Array.isArray(json) ? json : [])
       }catch(e){ console.error(e) }
     }
     load()
@@ -94,6 +101,7 @@ export default function HostPending(){
   return (
     <div>
       <h2>Pending Appointments</h2>
+      {loadError && <div style={{color:'#a00',marginBottom:10}}>{loadError}</div>}
       <div className="card wide-card">
         {(data||[]).length===0 && <div>No pending appointments</div>}
         <div style={{display:'grid',gridTemplateColumns:'1fr 360px',gap:12}}>

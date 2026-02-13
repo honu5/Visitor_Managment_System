@@ -133,7 +133,12 @@ export default function HostSchedule(){
                     className={cls}
                     style={{margin:6, minHeight:54, cursor: canToggle ? 'pointer' : 'default'}}
                     onClick={()=>{
-                      if(!canToggle) return
+                      if(!canToggle){
+                        if(cellEvents.length>0){
+                          alert('There is another visitor assigned for this time.')
+                        }
+                        return
+                      }
                       toggleBlockForCell(d,h)
                     }}
                     title={tip}

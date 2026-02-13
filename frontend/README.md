@@ -1,4 +1,4 @@
-Visitor Management Frontend
+Ketero Frontend
 
 Quick start:
 

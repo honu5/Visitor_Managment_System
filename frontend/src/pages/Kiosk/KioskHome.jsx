@@ -8,7 +8,7 @@ export default function KioskHome(){
   const [dept,setDept]=useState('')
   const [hosts,setHosts]=useState([])
   const [hostKey,setHostKey]=useState('')
-  const [form,setForm]=useState({fullName:'',email:'',phone:'',purpose:''})
+  const [form,setForm]=useState({fullName:'',email:'',phone:''})
   const [result,setResult]=useState(null)
   const [error,setError]=useState('')
 
@@ -63,7 +63,7 @@ export default function KioskHome(){
       fullName,
       email: String(form.email || '').trim(),
       phone: String(form.phone || '').trim(),
-      description: String(form.purpose || '').trim(),
+      description: null,
       visitorType: 'kiosk',
       department: dept,
       hostId: selectedHost.id,
@@ -99,7 +99,7 @@ export default function KioskHome(){
           </select>
         </div>
         <form onSubmit={submit}>
-          {['fullName','email','phone','purpose'].map(k=> (
+          {['fullName','email','phone'].map(k=> (
             <div className="form-row" key={k}>
               <label className="form-label">{k}</label>
               <input className="form-input" value={form[k]} onChange={e=>setForm({...form,[k]:e.target.value})} />

@@ -21,8 +21,13 @@ export default function HostNotifications(){
       try{
         if(!host) return
         setError('')
-        const res = await fetch(`/api/host/notifications?hostId=${host.id}`)
-        const json = await res.json()
+        const res = await fetch(`/api/host/notifications?hostId=${host.id}&email=${encodeURIComponent(host.email || '')}`)
+        const json = await res.json().catch(()=>null)
+        if(!res.ok){
+          setError(json?.error || 'Failed to load notifications')
+          setNotes([])
+          return
+        }
         setNotes(Array.isArray(json) ? json : [])
       }catch(e){ console.error(e) }
     }
@@ -35,7 +40,7 @@ export default function HostNotifications(){
       setError('')
       const id = String(note?.id || '')
       if(!id.startsWith('note-')) return
-      const res = await fetch(`/api/host/notifications/${encodeURIComponent(id)}?hostId=${host.id}`,{ method:'DELETE' })
+      const res = await fetch(`/api/host/notifications/${encodeURIComponent(id)}?hostId=${host.id}&email=${encodeURIComponent(host.email || '')}`,{ method:'DELETE' })
       const json = await res.json().catch(()=>null)
       if(!res.ok){
         setError(json?.error || 'Failed to delete notification')

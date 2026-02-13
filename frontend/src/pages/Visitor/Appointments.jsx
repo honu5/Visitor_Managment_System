@@ -12,6 +12,7 @@ export default function VisitorAppointments(){
   const query = useQuery()
   const hostName = query.get('host_name') || ''
   const hostId = query.get('host_id') || ''
+  const hostEmail = query.get('host_email') || ''
 
   // Demo visitor prefill
   const DEMO_VISITOR = { fullName: '', email: '', phone: '' }
@@ -29,7 +30,7 @@ export default function VisitorAppointments(){
 
   async function submit(e){
     e.preventDefault()
-    const payload = {...form, hostId, hostName}
+    const payload = {...form, hostId, hostName, hostEmail}
     try{
       const res = await createAppointment(payload)
       setResult(res)

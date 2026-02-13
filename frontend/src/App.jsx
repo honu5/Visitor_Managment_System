@@ -51,7 +51,7 @@ export default function App(){
     <div className="app-root">
       <header className="topbar">
         <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',width:'100%'}}>
-          <h1 style={{margin:0}}><Link to="/visitor/home" style={{color:'#fff',textDecoration:'none'}}>Visitor Management</Link></h1>
+          <h1 style={{margin:0}}><Link to="/visitor/home" style={{color:'#fff',textDecoration:'none'}}>Ketero</Link></h1>
           {showKioskTopNav && (
             <nav className="kiosk-top-nav">
               <NavLink to="/kiosk" end className={({isActive})=> isActive? 'top-nav-active':'top-nav-link'}>Home</NavLink>
@@ -65,7 +65,7 @@ export default function App(){
 
       <main className="content">
         <Routes>
-          <Route path="/" element={<div>Welcome to Visitor Management</div>} />
+          <Route path="/" element={<div>Welcome to Ketero</div>} />
 
           <Route path="/visitor/*" element={<VisitorLayout/>}>
             <Route index element={<VisitorLogin/>} />

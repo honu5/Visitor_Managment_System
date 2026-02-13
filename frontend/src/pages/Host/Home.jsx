@@ -8,6 +8,9 @@ function Home() {
 
   const [next, setNext] = useState([])
   const [pending, setPending] = useState([])
+  const [selectedPending, setSelectedPending] = useState(null)
+  const [scheduleDate, setScheduleDate] = useState('')
+  const [scheduleTime, setScheduleTime] = useState('')
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -20,15 +23,18 @@ function Home() {
     async function loadHostData(){
       if(!host) return
       try{
-        const tRes = await fetch(`/api/host/upcoming?hostId=${host.id}&limit=3`)
+        const tRes = await fetch(`/api/host/upcoming?hostId=${host.id}&email=${encodeURIComponent(host.email || '')}&limit=3`)
         const upcoming = await tRes.json()
         setNext(upcoming)
-        const pRes = await fetch(`/api/host/pending?hostId=${host.id}`)
+        const pRes = await fetch(`/api/host/pending?hostId=${host.id}&email=${encodeURIComponent(host.email || '')}`)
         const pend = await pRes.json()
         setPending(pend.slice(0,3))
       }catch(e){ console.error(e) }
     }
     loadHostData()
+    function onSchedule(){ loadHostData() }
+    window.addEventListener('vms_schedule_changed', onSchedule)
+    return ()=> window.removeEventListener('vms_schedule_changed', onSchedule)
   },[host])
 
   const formatDate = (d) =>
@@ -75,7 +81,7 @@ function Home() {
             <div style={{fontSize:12,letterSpacing:0.6,textTransform:'uppercase',color:'#666',marginBottom:6}}>
               Keycloak
             </div>
-            <h3 style={{marginTop:0}}>Sign in to Visitor Management</h3>
+            <h3 style={{marginTop:0}}>Sign in to Ketero</h3>
             <p style={{marginTop:6}}>This is a demo Keycloak login screen (no real Keycloak auth).</p>
             <form onSubmit={login}>
               <div className="form-row"><label className="form-label">Username or email</label>
@@ -101,6 +107,7 @@ function Home() {
   }
 
   return (
+    <>
     <div className="wide-card">
       <div style={{ textAlign: 'center', marginBottom: 12 }}>
         <div style={{display:'flex',justifyContent:'space-between',gap:8,alignItems:'center'}}>
@@ -138,7 +145,7 @@ function Home() {
             <h3 style={{ marginTop: 0 }}>Pending</h3>
             <div style={{display:'flex',gap:8,flexWrap:'wrap'}}>
               {pending.map(p=> (
-                <div key={p.id} className="host-card" style={{minWidth:180}}>
+                <div key={p.id} className="host-card" style={{minWidth:180,cursor:'pointer'}} onClick={()=>{ setSelectedPending(p); setScheduleDate(''); setScheduleTime('') }}>
                   <div className="title">{p.fullName}</div>
                   <div style={{fontSize:12,color:'#666'}}>{p.description || p.visitorType || ''}</div>
                 </div>
@@ -165,6 +172,45 @@ function Home() {
         </div>
       </div>
     </div>
+
+    {/* Modal for quick approve from host home */}
+    {selectedPending && (
+      <div className="modal-overlay" onClick={()=>setSelectedPending(null)}>
+        <div className="floating-card" onClick={e=>e.stopPropagation()}>
+          <button className="close-btn" onClick={()=>setSelectedPending(null)}>✕</button>
+          <h3>Schedule appointment for {selectedPending.fullName}</h3>
+          <div style={{marginTop:8}}>
+            <div className="form-row"><label className="form-label">Date</label>
+              <input className="form-input" type="date" value={scheduleDate} onChange={e=>setScheduleDate(e.target.value)} />
+            </div>
+            <div className="form-row"><label className="form-label">Time</label>
+              <input className="form-input" type="time" value={scheduleTime} onChange={e=>setScheduleTime(e.target.value)} />
+            </div>
+            <div style={{display:'flex',gap:8,justifyContent:'flex-end',marginTop:10}}>
+              <button className="button" onClick={async ()=>{
+                const scheduledAt = scheduleDate && scheduleTime ? new Date(`${scheduleDate}T${scheduleTime}:00`).toISOString() : null
+                if(!scheduledAt){ alert('Please select date and time'); return }
+                try{
+                  const res = await fetch(`/api/host/pending/${selectedPending.id}/approve`,{
+                    method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({ scheduledAt })
+                  })
+                  if(!res.ok){ const j = await res.json().catch(()=>null); alert(j?.error||'Approve failed'); return }
+                  setSelectedPending(null)
+                  // refresh data
+                  const tRes = await fetch(`/api/host/upcoming?hostId=${host.id}&email=${encodeURIComponent(host.email||'')}&limit=3`)
+                  setNext(await tRes.json())
+                  const pRes = await fetch(`/api/host/pending?hostId=${host.id}&email=${encodeURIComponent(host.email||'')}`)
+                  const pend = await pRes.json(); setPending(Array.isArray(pend)? pend.slice(0,3):[])
+                  window.dispatchEvent(new Event('vms_schedule_changed'))
+                }catch(e){ console.error(e); alert('Network error') }
+              }}>Approve</button>
+              <button className="button btn-red" onClick={()=>setSelectedPending(null)}>Cancel</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    )}
+    </>
   )
 }
 

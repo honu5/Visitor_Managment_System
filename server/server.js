@@ -177,8 +177,18 @@ async function enforceReapplyCooldown({ hostId, visitorEmail }){
 
 async function resolveHostGroup({ hostId, email }){
   let host = null
-  if(hostId) host = await prisma.host.findUnique({ where: { id: Number(hostId) } })
-  if(!host && email) host = await prisma.host.findFirst({ where: { email: String(email) }, orderBy: { id: 'asc' } })
+  if(hostId){
+    const idNum = Number(hostId)
+    if(Number.isFinite(idNum) && !Number.isNaN(idNum)){
+      host = await prisma.host.findUnique({ where: { id: idNum } }).catch(()=>null)
+    }
+  }
+  if(!host && email){
+    const emailNorm = normalizeEmail(email)
+    if(emailNorm){
+      host = await prisma.host.findFirst({ where: { email: emailNorm }, orderBy: { id: 'asc' } }).catch(()=>null)
+    }
+  }
   if(!host) return { host: null, hostIds: [] }
 
   const rows = await prisma.host.findMany({ where: { email: host.email }, select: { id: true } })
@@ -626,6 +636,20 @@ app.post('/api/host/appointment', async (req, res) => {
     return res.status(409).json({ error: 'The time is blocked. Select another time or unblock it.' })
   }
 
+  // prevent creating an appointment if another approved appointment exists at that hour
+  const hourEnd = new Date(hourStart)
+  hourEnd.setHours(hourEnd.getHours()+1)
+  const collision = await prisma.appointment.findFirst({
+    where: {
+      hostId: { in: ids },
+      status: { in: ACCEPTED_STATUSES },
+      scheduledAt: { gte: hourStart, lt: hourEnd }
+    }
+  }).catch(()=>null)
+  if(collision){
+    return res.status(409).json({ error: 'There is another visitor assigned for this time.' })
+  }
+
   try{
     const emailNorm = normalizeEmail(email)
     let visitor = await prisma.visitor.findUnique({ where: { email: emailNorm } })
@@ -1020,20 +1044,41 @@ app.get('/api/departments', async (req, res) => {
 
 // Visitor login: save username (no email required)
 app.post('/api/visitor/login', async (req, res) => {
-  const { username, email, phone } = req.body
-  if(!username && !email){
-    return res.status(400).json({ error: 'username or email required' })
+  const { username, email, phone } = req.body || {}
+  // Allow login by username, email or Ethiopian phone number.
+  if(!username && !email && !phone){
+    return res.status(400).json({ error: 'username, email or phone required' })
   }
-  try{
-    let visitor
-    if(email){
-      visitor = await prisma.visitor.findUnique({ where: { email } })
+
+  // If phone provided, validate Ethiopian format: 10 digits, starts with 09 or 07
+  const phoneRaw = phone ? String(phone).trim() : ''
+  if(phoneRaw){
+    if(!/^[0-9]{10}$/.test(phoneRaw) || !(phoneRaw.startsWith('09') || phoneRaw.startsWith('07'))){
+      return res.status(400).json({ error: "You don't have the correct form of the Ethiopian Phone number" })
     }
+  }
+
+  try{
+    let visitor = null
+    const emailNorm = email ? normalizeEmail(email) : null
+
+    if(emailNorm){
+      visitor = await prisma.visitor.findFirst({ where: { email: emailNorm } }).catch(()=>null)
+    }
+    if(!visitor && phoneRaw){
+      visitor = await prisma.visitor.findFirst({ where: { phone: phoneRaw } }).catch(()=>null)
+    }
+
     if(!visitor){
-      visitor = await prisma.visitor.create({ data: { username: username || null, email: email || null, phone: phone || null } })
+      visitor = await prisma.visitor.create({ data: { username: username || null, email: emailNorm || null, phone: phoneRaw || null } })
     } else if(username && !visitor.username){
       visitor = await prisma.visitor.update({ where: { id: visitor.id }, data: { username } })
+    } else if(emailNorm && !visitor.email){
+      visitor = await prisma.visitor.update({ where: { id: visitor.id }, data: { email: emailNorm } })
+    } else if(phoneRaw && !visitor.phone){
+      visitor = await prisma.visitor.update({ where: { id: visitor.id }, data: { phone: phoneRaw } })
     }
+
     res.json(visitor)
   }catch(err){
     console.error(err)
@@ -1261,6 +1306,13 @@ app.post('/api/kiosk/checkin', async (req, res) => {
   try{
     const appt = await prisma.appointment.findFirst({ where: { OR: [ { publicId: term }, { email: term } ] }, include: { host: true } })
     if(!appt) return res.status(404).json({ error: 'appointment not found' })
+    // Prevent checking in an appointment that has already been checked out
+    if(appt.status === 'checked-out'){
+      return res.status(409).json({ error: 'This appointment has already been checked out and cannot be checked in again.' })
+    }
+    if(appt.status === 'checked-in'){
+      return res.status(400).json({ error: 'Appointment is already checked in.' })
+    }
     const updated = await prisma.appointment.update({ where: { id: appt.id }, data: { status: 'checked-in' } })
     // notify receptionist demo bucket
     await prisma.notification.create({ data: { recipientEmail: DEMO_RECIPIENT_RECEPTIONIST, message: `${updated.fullName} ( ${updated.publicId || ''} ) checked in via kiosk` } }).catch(()=>null)
@@ -1275,6 +1327,10 @@ app.post('/api/kiosk/checkout', async (req, res) => {
   try{
     const appt = await prisma.appointment.findFirst({ where: { OR: [ { publicId: term }, { email: term } ] }, include: { host: true } })
     if(!appt) return res.status(404).json({ error: 'appointment not found' })
+    // Only allow checkout if the appointment is currently checked-in
+    if(appt.status !== 'checked-in'){
+      return res.status(409).json({ error: 'It is impossible to check out an appointment before checking in.' })
+    }
     const updated = await prisma.appointment.update({ where: { id: appt.id }, data: { status: 'checked-out' } })
     await prisma.notification.create({ data: { recipientEmail: DEMO_RECIPIENT_RECEPTIONIST, message: `${updated.fullName} ( ${updated.publicId || ''} ) checked out via kiosk` } }).catch(()=>null)
     res.json({ success: true, appointment: updated })

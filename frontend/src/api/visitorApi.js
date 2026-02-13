@@ -12,7 +12,12 @@ export async function createAppointment(data){
   const res = await fetch(`${API_BASE}/appointments`,{
     method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)
   })
-  return res.json()
+  const json = await res.json().catch(()=>null)
+  if(!res.ok){
+    const msg = json?.error || json?.message || 'failed to create appointment'
+    throw new Error(msg)
+  }
+  return json
 }
 export async function fetchVisitorHistory(){
   const res = await fetch(`${API_BASE}/api/visitor/history`)
